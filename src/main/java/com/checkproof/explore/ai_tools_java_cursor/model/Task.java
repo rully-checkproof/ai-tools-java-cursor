@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
+
 @Entity
 @Table(name = "tasks")
 @Data
@@ -51,10 +52,8 @@ public class Task {
     @Builder.Default
     private TaskStatus status = TaskStatus.PENDING;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "recurrence_type")
-    private RecurrencePattern.RecurrenceType recurrenceType;
-
+    // REMOVED: redundant recurrenceType field
+    
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     @JoinColumn(name = "recurrence_pattern_id")
     private RecurrencePattern recurrencePattern;
@@ -81,6 +80,16 @@ public class Task {
         updatedAt = LocalDateTime.now();
     }
 
+    // Helper method to get recurrence type from pattern
+    public RecurrencePattern.RecurrenceType getRecurrenceType() {
+        return recurrencePattern != null ? recurrencePattern.getRecurrenceType() : null;
+    }
+
+    // Helper method to check if task is recurring
+    public boolean isRecurring() {
+        return recurrencePattern != null;
+    }
+
     public enum Priority {
         LOW, MEDIUM, HIGH, URGENT
     }
@@ -88,4 +97,4 @@ public class Task {
     public enum TaskStatus {
         PENDING, IN_PROGRESS, COMPLETED, CANCELLED, ON_HOLD
     }
-} 
+}
