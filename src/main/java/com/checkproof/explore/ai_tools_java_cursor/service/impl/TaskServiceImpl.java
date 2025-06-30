@@ -180,7 +180,7 @@ public class TaskServiceImpl implements TaskService {
         
         // Generate recurrence dates using utility
         List<LocalDateTime> recurrenceDates = recurrenceUtil.generateRecurrenceDates(
-            currentDate, pattern, 100); // Default max 100 occurrences
+            currentDate, pattern, DEFAULT_RECURRENCE_LIMIT); // Default max occurrences
         
         for (LocalDateTime startDate : recurrenceDates) {
             Task recurringTask = createTaskInstance(baseTask, startDate);
