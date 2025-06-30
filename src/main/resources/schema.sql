@@ -25,6 +25,7 @@ CREATE TABLE IF NOT EXISTS recurrence_patterns (
 CREATE TABLE IF NOT EXISTS recurrence_pattern_days_of_week (
     recurrence_pattern_id BIGINT,
     day_of_week VARCHAR(255),
+    PRIMARY KEY (recurrence_pattern_id, day_of_week),
     FOREIGN KEY (recurrence_pattern_id) REFERENCES recurrence_patterns(id)
 );
 
