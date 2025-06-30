@@ -2,10 +2,11 @@ package com.checkproof.explore.ai_tools_java_cursor.service;
 
 import com.checkproof.explore.ai_tools_java_cursor.dto.TaskDto;
 import com.checkproof.explore.ai_tools_java_cursor.dto.TaskStatisticsDto;
+import com.checkproof.explore.ai_tools_java_cursor.dto.PaginatedResponseDto;
+import com.checkproof.explore.ai_tools_java_cursor.dto.PaginationRequestDto;
 import com.checkproof.explore.ai_tools_java_cursor.model.Task;
 import com.checkproof.explore.ai_tools_java_cursor.model.RecurrencePattern;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -30,7 +31,7 @@ public interface TaskService {
     /**
      * Get all tasks with pagination
      */
-    Page<TaskDto> getAllTasks(Pageable pageable);
+    PaginatedResponseDto<TaskDto> getAllTasks(PaginationRequestDto paginationRequest);
 
     /**
      * Update an existing task
@@ -47,7 +48,7 @@ public interface TaskService {
     /**
      * Find tasks by date range with pagination
      */
-    Page<TaskDto> findTasksByDateRange(LocalDateTime startDate, LocalDateTime endDate, Pageable pageable);
+    PaginatedResponseDto<TaskDto> findTasksByDateRange(LocalDateTime startDate, LocalDateTime endDate, PaginationRequestDto paginationRequest);
 
     /**
      * Find tasks by date range without pagination
@@ -62,7 +63,7 @@ public interface TaskService {
     /**
      * Find upcoming tasks with pagination
      */
-    Page<TaskDto> findUpcomingTasks(Pageable pageable);
+    PaginatedResponseDto<TaskDto> findUpcomingTasks(PaginationRequestDto paginationRequest);
 
     // ==================== Recurring Task Logic ====================
 

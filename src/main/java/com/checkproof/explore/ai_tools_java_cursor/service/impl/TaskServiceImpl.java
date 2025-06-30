@@ -2,6 +2,8 @@ package com.checkproof.explore.ai_tools_java_cursor.service.impl;
 
 import com.checkproof.explore.ai_tools_java_cursor.dto.TaskDto;
 import com.checkproof.explore.ai_tools_java_cursor.dto.TaskStatisticsDto;
+import com.checkproof.explore.ai_tools_java_cursor.dto.PaginatedResponseDto;
+import com.checkproof.explore.ai_tools_java_cursor.dto.PaginationRequestDto;
 import com.checkproof.explore.ai_tools_java_cursor.exception.TaskNotFoundException;
 import com.checkproof.explore.ai_tools_java_cursor.exception.InvalidTaskException;
 import com.checkproof.explore.ai_tools_java_cursor.exception.TaskOverlapException;
@@ -64,10 +66,11 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     @Transactional(readOnly = true)
-    public Page<TaskDto> getAllTasks(Pageable pageable) {
-        log.debug("Fetching all tasks with pagination: {}", pageable);
-        return taskRepository.findAll(pageable)
-                .map(TaskDto::fromEntity);
+    public PaginatedResponseDto<TaskDto> getAllTasks(PaginationRequestDto paginationRequest) {
+        log.debug("Fetching all tasks with pagination: {}", paginationRequest);
+        Pageable pageable = paginationRequest.toPageable("startDate");
+        Page<Task> page = taskRepository.findAll(pageable);
+        return PaginatedResponseDto.fromPage(page.map(TaskDto::fromEntity));
     }
 
     @Override
@@ -113,10 +116,11 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     @Transactional(readOnly = true)
-    public Page<TaskDto> findTasksByDateRange(LocalDateTime startDate, LocalDateTime endDate, Pageable pageable) {
-        log.debug("Finding tasks by date range: {} to {} with pagination: {}", startDate, endDate, pageable);
-        return taskRepository.findTasksByDateRange(startDate, endDate, pageable)
-                .map(TaskDto::fromEntity);
+    public PaginatedResponseDto<TaskDto> findTasksByDateRange(LocalDateTime startDate, LocalDateTime endDate, PaginationRequestDto paginationRequest) {
+        log.debug("Finding tasks by date range: {} to {} with pagination: {}", startDate, endDate, paginationRequest);
+        Pageable pageable = paginationRequest.toPageable("startDate");
+        Page<Task> page = taskRepository.findTasksByDateRange(startDate, endDate, pageable);
+        return PaginatedResponseDto.fromPage(page.map(TaskDto::fromEntity));
     }
 
     @Override
@@ -143,12 +147,13 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     @Transactional(readOnly = true)
-    public Page<TaskDto> findUpcomingTasks(Pageable pageable) {
+    public PaginatedResponseDto<TaskDto> findUpcomingTasks(PaginationRequestDto paginationRequest) {
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime sevenDaysLater = now.plusDays(7);
-        log.debug("Finding upcoming tasks between {} and {} with pagination: {}", now, sevenDaysLater, pageable);
-        return taskRepository.findUpcomingTasks(now, sevenDaysLater, pageable)
-                .map(TaskDto::fromEntity);
+        log.debug("Finding upcoming tasks between {} and {} with pagination: {}", now, sevenDaysLater, paginationRequest);
+        Pageable pageable = paginationRequest.toPageable("startDate");
+        Page<Task> page = taskRepository.findUpcomingTasks(now, sevenDaysLater, pageable);
+        return PaginatedResponseDto.fromPage(page.map(TaskDto::fromEntity));
     }
 
     // ==================== Recurring Task Logic ====================
