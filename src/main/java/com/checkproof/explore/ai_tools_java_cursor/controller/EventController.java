@@ -3,6 +3,9 @@ package com.checkproof.explore.ai_tools_java_cursor.controller;
 import com.checkproof.explore.ai_tools_java_cursor.dto.EventDto;
 import com.checkproof.explore.ai_tools_java_cursor.dto.PaginatedResponseDto;
 import com.checkproof.explore.ai_tools_java_cursor.dto.PaginationRequestDto;
+import com.checkproof.explore.ai_tools_java_cursor.dto.ConflictCheckResponse;
+import com.checkproof.explore.ai_tools_java_cursor.dto.TimeSlotAvailabilityResponse;
+import com.checkproof.explore.ai_tools_java_cursor.dto.EventStatisticsResponse;
 import com.checkproof.explore.ai_tools_java_cursor.model.Event;
 import com.checkproof.explore.ai_tools_java_cursor.model.Participant;
 import com.checkproof.explore.ai_tools_java_cursor.service.EventService;
@@ -399,58 +402,5 @@ public class EventController {
         );
         
         return ResponseEntity.ok(statistics);
-    }
-
-    // Response classes for complex responses
-    public static class ConflictCheckResponse {
-        private final boolean hasConflict;
-        private final List<EventDto> conflictingEvents;
-
-        public ConflictCheckResponse(boolean hasConflict, List<EventDto> conflictingEvents) {
-            this.hasConflict = hasConflict;
-            this.conflictingEvents = conflictingEvents;
-        }
-
-        public boolean isHasConflict() { return hasConflict; }
-        public List<EventDto> getConflictingEvents() { return conflictingEvents; }
-    }
-
-    public static class TimeSlotAvailabilityResponse {
-        private final boolean isAvailable;
-        private final LocalDateTime startTime;
-        private final LocalDateTime endTime;
-
-        public TimeSlotAvailabilityResponse(boolean isAvailable, LocalDateTime startTime, LocalDateTime endTime) {
-            this.isAvailable = isAvailable;
-            this.startTime = startTime;
-            this.endTime = endTime;
-        }
-
-        public boolean isAvailable() { return isAvailable; }
-        public LocalDateTime getStartTime() { return startTime; }
-        public LocalDateTime getEndTime() { return endTime; }
-    }
-
-    public static class EventStatisticsResponse {
-        private final long upcomingEvents;
-        private final long todayEvents;
-        private final long meetingEvents;
-        private final long conferenceEvents;
-        private final long workshopEvents;
-
-        public EventStatisticsResponse(long upcomingEvents, long todayEvents, 
-                                     long meetingEvents, long conferenceEvents, long workshopEvents) {
-            this.upcomingEvents = upcomingEvents;
-            this.todayEvents = todayEvents;
-            this.meetingEvents = meetingEvents;
-            this.conferenceEvents = conferenceEvents;
-            this.workshopEvents = workshopEvents;
-        }
-
-        public long getUpcomingEvents() { return upcomingEvents; }
-        public long getTodayEvents() { return todayEvents; }
-        public long getMeetingEvents() { return meetingEvents; }
-        public long getConferenceEvents() { return conferenceEvents; }
-        public long getWorkshopEvents() { return workshopEvents; }
     }
 } 
