@@ -13,11 +13,9 @@ import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.springframework.context.annotation.DependsOn;
 
 @Entity
 @Table(name = "tasks")
-@DependsOn("RecurrencePattern")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
