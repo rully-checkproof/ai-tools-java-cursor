@@ -1,6 +1,11 @@
 package com.checkproof.explore.ai_tools_java_cursor.service.impl;
 
 import com.checkproof.explore.ai_tools_java_cursor.dto.TaskDto;
+import com.checkproof.explore.ai_tools_java_cursor.dto.TaskStatisticsDto;
+import com.checkproof.explore.ai_tools_java_cursor.exception.TaskNotFoundException;
+import com.checkproof.explore.ai_tools_java_cursor.exception.InvalidTaskException;
+import com.checkproof.explore.ai_tools_java_cursor.exception.TaskOverlapException;
+import com.checkproof.explore.ai_tools_java_cursor.exception.InvalidStatusTransitionException;
 import com.checkproof.explore.ai_tools_java_cursor.model.Task;
 import com.checkproof.explore.ai_tools_java_cursor.model.RecurrencePattern;
 import com.checkproof.explore.ai_tools_java_cursor.model.Participant;
@@ -70,7 +75,7 @@ public class TaskServiceImpl implements TaskService {
         log.info("Updating task with ID: {}", id);
         
         Task existingTask = taskRepository.findById(id)
-                .orElseThrow(() -> new TaskNotFoundException("Task not found with ID: " + id));
+                .orElseThrow(() -> new TaskNotFoundException(id));
         
         Task task = taskDto.toEntity();
         validateTask(task);
@@ -97,7 +102,7 @@ public class TaskServiceImpl implements TaskService {
         log.info("Deleting task with ID: {}", id);
         
         if (!taskRepository.existsById(id)) {
-            throw new TaskNotFoundException("Task not found with ID: " + id);
+            throw new TaskNotFoundException(id);
         }
         
         taskRepository.deleteById(id);
@@ -199,7 +204,7 @@ public class TaskServiceImpl implements TaskService {
         log.info("Updating task status: taskId={}, newStatus={}", taskId, newStatus);
         
         Task task = taskRepository.findById(taskId)
-                .orElseThrow(() -> new TaskNotFoundException("Task not found with ID: " + taskId));
+                .orElseThrow(() -> new TaskNotFoundException(taskId));
         
         validateStatusTransition(task.getStatus(), newStatus);
         
@@ -212,11 +217,11 @@ public class TaskServiceImpl implements TaskService {
 
     private void validateStatusTransition(Task.TaskStatus currentStatus, Task.TaskStatus newStatus) {
         if (currentStatus == Task.TaskStatus.COMPLETED && newStatus != Task.TaskStatus.COMPLETED) {
-            throw new InvalidStatusTransitionException("Cannot change status from COMPLETED to " + newStatus);
+            throw new InvalidStatusTransitionException(currentStatus, newStatus, "Completed tasks cannot be modified");
         }
         
         if (currentStatus == Task.TaskStatus.CANCELLED && newStatus != Task.TaskStatus.CANCELLED) {
-            throw new InvalidStatusTransitionException("Cannot change status from CANCELLED to " + newStatus);
+            throw new InvalidStatusTransitionException(currentStatus, newStatus, "Cancelled tasks cannot be modified");
         }
     }
 
@@ -244,19 +249,19 @@ public class TaskServiceImpl implements TaskService {
 
     private void validateTask(Task task) {
         if (task.getTitle() == null || task.getTitle().trim().isEmpty()) {
-            throw new InvalidTaskException("Task title is required");
+            throw new InvalidTaskException("title", "Task title is required");
         }
         
         if (task.getStartDate() == null) {
-            throw new InvalidTaskException("Task start date is required");
+            throw new InvalidTaskException("startDate", "Task start date is required");
         }
         
         if (task.getEndDate() != null && task.getEndDate().isBefore(task.getStartDate())) {
-            throw new InvalidTaskException("Task end date cannot be before start date");
+            throw new InvalidTaskException("endDate", "Task end date cannot be before start date");
         }
         
         if (task.getStartDate().isBefore(LocalDateTime.now().minusDays(1))) {
-            throw new InvalidTaskException("Task start date cannot be in the past");
+            throw new InvalidTaskException("startDate", "Task start date cannot be in the past");
         }
     }
 
@@ -366,46 +371,20 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     @Transactional(readOnly = true)
-    public TaskStatistics getTaskStatistics() {
+    public TaskStatisticsDto getTaskStatistics() {
         log.debug("Getting task statistics");
         
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime sevenDaysLater = now.plusDays(7);
         
-        return new TaskStatistics(
-                taskRepository.count(),
-                taskRepository.countByStatus(Task.TaskStatus.PENDING),
-                taskRepository.countByStatus(Task.TaskStatus.IN_PROGRESS),
-                taskRepository.countByStatus(Task.TaskStatus.COMPLETED),
-                taskRepository.countByStatus(Task.TaskStatus.CANCELLED),
-                taskRepository.countOverdueTasks(now),
-                taskRepository.countUpcomingTasks(now, sevenDaysLater)
-        );
-    }
-
-    // ==================== Exception Classes ====================
-
-    public static class TaskNotFoundException extends RuntimeException {
-        public TaskNotFoundException(String message) {
-            super(message);
-        }
-    }
-
-    public static class InvalidTaskException extends RuntimeException {
-        public InvalidTaskException(String message) {
-            super(message);
-        }
-    }
-
-    public static class TaskOverlapException extends RuntimeException {
-        public TaskOverlapException(String message) {
-            super(message);
-        }
-    }
-
-    public static class InvalidStatusTransitionException extends RuntimeException {
-        public InvalidStatusTransitionException(String message) {
-            super(message);
-        }
+        return TaskStatisticsDto.builder()
+                .totalTasks(taskRepository.count())
+                .pendingTasks(taskRepository.countByStatus(Task.TaskStatus.PENDING))
+                .inProgressTasks(taskRepository.countByStatus(Task.TaskStatus.IN_PROGRESS))
+                .completedTasks(taskRepository.countByStatus(Task.TaskStatus.COMPLETED))
+                .cancelledTasks(taskRepository.countByStatus(Task.TaskStatus.CANCELLED))
+                .overdueTasks(taskRepository.countOverdueTasks(now))
+                .upcomingTasks(taskRepository.countUpcomingTasks(now, sevenDaysLater))
+                .build();
     }
 } 
