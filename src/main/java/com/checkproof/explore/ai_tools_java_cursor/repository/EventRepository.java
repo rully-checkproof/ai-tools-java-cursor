@@ -78,12 +78,12 @@ public interface EventRepository extends JpaRepository<Event, Long> {
     Page<Event> findByDescriptionContainingIgnoreCase(@Param("description") String description, Pageable pageable);
 
     // Find today's events
-    @Query("SELECT e FROM Event e WHERE DATE(e.eventDate) = DATE(:today) ORDER BY e.eventDate ASC")
-    List<Event> findTodaysEvents(@Param("today") LocalDateTime today);
+    @Query("SELECT e FROM Event e WHERE e.eventDate BETWEEN :startOfDay AND :endOfDay ORDER BY e.eventDate ASC")
+    List<Event> findTodaysEvents(@Param("startOfDay") LocalDateTime startOfDay, @Param("endOfDay") LocalDateTime endOfDay);
 
     // Find today's events with pagination
-    @Query("SELECT e FROM Event e WHERE DATE(e.eventDate) = DATE(:today) ORDER BY e.eventDate ASC")
-    Page<Event> findTodaysEvents(@Param("today") LocalDateTime today, Pageable pageable);
+    @Query("SELECT e FROM Event e WHERE e.eventDate BETWEEN :startOfDay AND :endOfDay ORDER BY e.eventDate ASC")
+    Page<Event> findTodaysEvents(@Param("startOfDay") LocalDateTime startOfDay, @Param("endOfDay") LocalDateTime endOfDay, Pageable pageable);
 
     // Find events for a specific day
     @Query("SELECT e FROM Event e WHERE DATE(e.eventDate) = DATE(:date) ORDER BY e.eventDate ASC")
