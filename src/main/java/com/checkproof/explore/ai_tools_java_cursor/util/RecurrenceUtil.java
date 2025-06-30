@@ -5,8 +5,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.time.*;
-import java.time.temporal.ChronoUnit;
-import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -457,7 +455,7 @@ public class RecurrenceUtil {
                                                RecurrencePattern pattern) {
         LocalDateTime currentDate = startDate;
         
-        while (currentDate.isBefore(date)) {
+        while (!currentDate.isAfter(date)) {
             currentDate = getNextOccurrence(currentDate, pattern);
         }
         

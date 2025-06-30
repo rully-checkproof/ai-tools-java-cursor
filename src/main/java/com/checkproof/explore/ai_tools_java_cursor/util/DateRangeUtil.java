@@ -23,7 +23,7 @@ public class DateRangeUtil {
     private static final LocalTime DEFAULT_BUSINESS_END = LocalTime.of(17, 0);
     
     // Default timezone
-    private static final ZoneId DEFAULT_ZONE = ZoneId.systemDefault();
+    private static final ZoneId DEFAULT_ZONE = ZoneOffset.UTC;
 
     /**
      * Check if two date ranges overlap
