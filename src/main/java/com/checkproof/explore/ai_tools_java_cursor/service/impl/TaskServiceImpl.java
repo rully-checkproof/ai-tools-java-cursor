@@ -40,6 +40,8 @@ public class TaskServiceImpl implements TaskService {
     private final RecurrencePatternRepository recurrencePatternRepository;
     private final RecurrenceUtil recurrenceUtil;
 
+    private static final int DEFAULT_RECURRENCE_LIMIT = 100;
+
     // ==================== CRUD Operations ====================
 
     @Override
