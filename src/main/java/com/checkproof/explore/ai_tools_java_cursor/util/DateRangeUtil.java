@@ -72,15 +72,19 @@ public class DateRangeUtil {
         }
 
         long days = ChronoUnit.DAYS.between(startDate, endDate) + 1;
-        long weekends = 0;
+        long totalWeeks = days / 7;
+        long remainingDays = days % 7;
 
-        LocalDate current = startDate;
-        while (!current.isAfter(endDate)) {
-            DayOfWeek dayOfWeek = current.getDayOfWeek();
+        // Calculate weekend days in complete weeks
+        long weekends = totalWeeks * 2;
+
+        // Calculate weekend days in remaining days
+        LocalDate partialWeekStart = endDate.minusDays(remainingDays - 1);
+        for (int i = 0; i < remainingDays; i++) {
+            DayOfWeek dayOfWeek = partialWeekStart.plusDays(i).getDayOfWeek();
             if (dayOfWeek == DayOfWeek.SATURDAY || dayOfWeek == DayOfWeek.SUNDAY) {
                 weekends++;
             }
-            current = current.plusDays(1);
         }
 
         return days - weekends;
