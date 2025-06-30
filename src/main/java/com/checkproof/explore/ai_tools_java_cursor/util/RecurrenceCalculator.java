@@ -49,7 +49,7 @@ public class RecurrenceCalculator {
 
         LocalDateTime nextDate = currentDate;
         int attempts = 0;
-        int maxAttempts = 10; // Prevent infinite loops
+        int maxAttempts = DEFAULT_MAX_ATTEMPTS; // Use class-level constant to prevent infinite loops
 
         while (attempts < maxAttempts) {
             nextDate = calculateNextOccurrence(nextDate, pattern);
