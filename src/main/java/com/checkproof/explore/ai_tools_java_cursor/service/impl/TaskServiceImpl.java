@@ -15,7 +15,7 @@ import com.checkproof.explore.ai_tools_java_cursor.repository.TaskRepository;
 import com.checkproof.explore.ai_tools_java_cursor.repository.ParticipantRepository;
 import com.checkproof.explore.ai_tools_java_cursor.repository.RecurrencePatternRepository;
 import com.checkproof.explore.ai_tools_java_cursor.service.TaskService;
-import com.checkproof.explore.ai_tools_java_cursor.util.RecurrenceCalculator;
+import com.checkproof.explore.ai_tools_java_cursor.util.RecurrenceUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -38,7 +38,7 @@ public class TaskServiceImpl implements TaskService {
     private final TaskRepository taskRepository;
     private final ParticipantRepository participantRepository;
     private final RecurrencePatternRepository recurrencePatternRepository;
-    private final RecurrenceCalculator recurrenceCalculator;
+    private final RecurrenceUtil recurrenceUtil;
 
     // ==================== CRUD Operations ====================
 
@@ -179,7 +179,7 @@ public class TaskServiceImpl implements TaskService {
         LocalDateTime currentDate = baseTask.getStartDate();
         
         // Generate recurrence dates using utility
-        List<LocalDateTime> recurrenceDates = recurrenceCalculator.generateRecurrenceDates(
+        List<LocalDateTime> recurrenceDates = recurrenceUtil.generateRecurrenceDates(
             currentDate, pattern, 100); // Default max 100 occurrences
         
         for (LocalDateTime startDate : recurrenceDates) {
@@ -195,7 +195,7 @@ public class TaskServiceImpl implements TaskService {
                 .title(baseTask.getTitle())
                 .description(baseTask.getDescription())
                 .startDate(startDate)
-                .endDate(recurrenceCalculator.calculateEndDate(startDate, baseTask.getStartDate(), baseTask.getEndDate()))
+                .endDate(recurrenceUtil.calculateEndDate(startDate, baseTask.getStartDate(), baseTask.getEndDate()))
                 .priority(baseTask.getPriority())
                 .status(Task.TaskStatus.PENDING)
                 .participants(baseTask.getParticipants())
