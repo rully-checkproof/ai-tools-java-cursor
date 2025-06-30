@@ -100,9 +100,29 @@ public class RecurrenceCalculator {
     private LocalDateTime calculateNextMonthlyWithWeekOfMonth(LocalDateTime currentDate, RecurrencePattern pattern) {
         LocalDateTime nextDate = currentDate.plusMonths(pattern.getInterval());
         
-        // This is a simplified implementation - you might want to add more logic
-        // for handling specific weeks of the month
-        return nextDate;
+        if (pattern.getWeekOfMonth() == null || pattern.getDayOfWeek() == null) {
+            throw new UnsupportedOperationException("Week-of-month and day-of-week must be specified for this recurrence pattern.");
+        }
+        
+        // Calculate the first day of the target month
+        LocalDateTime firstDayOfMonth = nextDate.withDayOfMonth(1);
+        
+        // Find the first occurrence of the specified day of the week in the month
+        LocalDateTime firstOccurrence = firstDayOfMonth;
+        while (firstOccurrence.getDayOfWeek() != pattern.getDayOfWeek()) {
+            firstOccurrence = firstOccurrence.plusDays(1);
+        }
+        
+        // Calculate the target week
+        int targetWeek = pattern.getWeekOfMonth();
+        LocalDateTime targetDate = firstOccurrence.plusWeeks(targetWeek - 1);
+        
+        // Ensure the target date is within the same month
+        if (targetDate.getMonth() != nextDate.getMonth()) {
+            throw new UnsupportedOperationException("Specified week-of-month exceeds the number of weeks in the month.");
+        }
+        
+        return targetDate;
     }
 
     /**
