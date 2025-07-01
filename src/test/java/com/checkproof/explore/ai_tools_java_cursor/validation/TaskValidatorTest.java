@@ -421,11 +421,13 @@ class TaskValidatorTest {
         assertFalse(errors.hasErrors());
     }
 
+    private static final LocalDateTime FIXED_TIMESTAMP = LocalDateTime.of(2023, 1, 1, 12, 0);
+
     private TaskDto createValidTaskDto() {
         TaskDto taskDto = new TaskDto();
         taskDto.setTitle("Test Task");
-        taskDto.setStartDate(LocalDateTime.now().plusDays(1));
-        taskDto.setEndDate(LocalDateTime.now().plusDays(2));
+        taskDto.setStartDate(FIXED_TIMESTAMP.plusDays(1));
+        taskDto.setEndDate(FIXED_TIMESTAMP.plusDays(2));
         taskDto.setDescription("Test description");
         taskDto.setPriority(Task.Priority.MEDIUM);
         taskDto.setStatus(Task.TaskStatus.PENDING);
