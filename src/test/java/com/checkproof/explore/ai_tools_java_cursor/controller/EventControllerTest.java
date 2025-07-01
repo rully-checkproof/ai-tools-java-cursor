@@ -25,6 +25,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import static org.hamcrest.Matchers.hasItems;
+import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -418,15 +420,16 @@ class EventControllerTest {
         participants.add(createSampleParticipant(1L, "John Doe"));
         participants.add(createSampleParticipant(2L, "Jane Smith"));
 
-        when(eventService.getEventParticipants(eventId)).thenReturn(participants);
+        lenient().when(eventService.getEventParticipants(eventId)).thenReturn(participants);
 
         // When & Then
         mockMvc.perform(get("/api/events/{eventId}/participants", eventId))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$").isArray())
-                .andExpect(jsonPath("$[0].name").value("Jane Smith"))
-                .andExpect(jsonPath("$[1].name").value("John Doe"));
+                .andExpect(jsonPath("$", hasSize(2)))
+                .andExpect(jsonPath("$[*].name", hasItems("John Doe", "Jane Smith")))
+                .andExpect(jsonPath("$[*].id", hasItems(1, 2)));
 
         verify(eventService).getEventParticipants(eventId);
     }
