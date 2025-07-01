@@ -12,8 +12,6 @@ import com.checkproof.explore.ai_tools_java_cursor.model.Task;
 import com.checkproof.explore.ai_tools_java_cursor.model.RecurrencePattern;
 import com.checkproof.explore.ai_tools_java_cursor.model.Participant;
 import com.checkproof.explore.ai_tools_java_cursor.repository.TaskRepository;
-import com.checkproof.explore.ai_tools_java_cursor.repository.ParticipantRepository;
-import com.checkproof.explore.ai_tools_java_cursor.repository.RecurrencePatternRepository;
 import com.checkproof.explore.ai_tools_java_cursor.service.TaskService;
 import com.checkproof.explore.ai_tools_java_cursor.util.RecurrenceUtil;
 import lombok.RequiredArgsConstructor;
@@ -36,8 +34,6 @@ import java.util.stream.Collectors;
 public class TaskServiceImpl implements TaskService {
 
     private final TaskRepository taskRepository;
-    private final ParticipantRepository participantRepository;
-    private final RecurrencePatternRepository recurrencePatternRepository;
     private final RecurrenceUtil recurrenceUtil;
 
     private static final int DEFAULT_RECURRENCE_LIMIT = 100;

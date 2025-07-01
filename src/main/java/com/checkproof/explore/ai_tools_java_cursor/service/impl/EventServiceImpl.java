@@ -13,9 +13,6 @@ import com.checkproof.explore.ai_tools_java_cursor.model.Participant;
 import com.checkproof.explore.ai_tools_java_cursor.repository.EventRepository;
 import com.checkproof.explore.ai_tools_java_cursor.repository.ParticipantRepository;
 import com.checkproof.explore.ai_tools_java_cursor.service.EventService;
-import com.checkproof.explore.ai_tools_java_cursor.util.CalendarUtil;
-import com.checkproof.explore.ai_tools_java_cursor.util.DateRangeUtil;
-import com.checkproof.explore.ai_tools_java_cursor.util.RecurrenceUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -39,9 +36,6 @@ public class EventServiceImpl implements EventService {
     private final EventRepository eventRepository;
     private final ParticipantRepository participantRepository;
     private final EventMapper eventMapper;
-    private final CalendarUtil calendarUtil;
-    private final DateRangeUtil dateRangeUtil;
-    private final RecurrenceUtil recurrenceUtil;
 
     @Override
     public List<EventDto> getEventsForMonth(int year, int month) {
